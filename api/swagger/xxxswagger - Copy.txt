@@ -1,0 +1,464 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: IPTracker Project
+# during dev, should point to your local machine
+host: localhost
+# basePath prefixes all resource paths
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+x-a127-config: {}
+x-volos-resources: {}
+
+paths:
+  
+  /hello:
+  
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hello_world1
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+  
+    get:
+      description: Returns 'Hello' to the caller.  A test method call.
+      # used as the method name of the controller
+      operationId: hello1
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: ErrorResponse
+  
+  /user:
+  
+    # binds a127 app logic to a route
+    x-swagger-router-controller: user2
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+
+    post:
+      description: Creates a new user
+      # used as the method name of the controller
+      operationId: createuser2
+      parameters:
+        - in: body
+          name: aUser
+          description: The data for a new user
+          required: true
+          schema:
+            $ref: "#/definitions/UserDocument"          
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UserDocument"
+ 
+    
+  /user/{userid}:
+
+    # binds a127 app logic to a route
+    x-swagger-router-controller: userspecific3
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+    
+    get:
+      description: Returns a user for a user id
+      # used as the method name of the controller
+      operationId: getuserforuserid3
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to return data for
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UserDocument"
+
+    put:
+      description: Updates single user record
+      # used as the method name of the controller
+      operationId: putuserforuserid4
+      parameters:
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to update
+          type: string
+        - in: body
+          name: body
+          description: User document that needs to be updated
+          required: true
+          schema:
+            $ref: "#/definitions/UserDocument"     
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UserDocument"
+
+    delete:
+      description: deletes a single user based on the userid supplied
+      operationId: deleteuser5
+      parameters:
+        - name: userid
+          in: path
+          description: ID of user to delete
+          required: true
+          type: string
+      responses:
+        204:
+          description: user deleted
+        default:
+          description: unexpected error
+
+
+  /user/{userid}/hosts:
+
+    # binds a127 app logic to a route
+    x-swagger-router-controller: userhosts4
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+    
+    get:
+      description: Returns a lists of hosts for a user id
+      # used as the method name of the controller
+      operationId: gethostsforuserid6
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to return hosts for
+          required: true
+          type: string
+        - name: limit
+          in: query
+          description: The maximum number of documents to return
+          required: false
+          type: integer
+          default: 50
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/HostDocuments"
+ 
+            
+  /user/{userid}/host/:
+
+    x-swagger-router-controller: hosts5
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+
+    post:
+      description: Creates a host for a user id 
+      # used as the method name of the controller
+      operationId: posthostforuserid7
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to create a hosts for
+          required: true
+          type: string
+        - name: aHost
+          in: body
+          description: The data for the new host
+          required: true
+          schema:
+            $ref: "#/definitions/HostDocument"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/HostDocument"
+
+
+  /user/{userid}/host/{hostid}:
+
+    x-swagger-router-controller: host6
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+
+    get:
+      description: Returns a host for a user id and host id
+      # used as the method name of the controller
+      operationId: gethostforuserid8
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to return hosts for
+          required: true
+          type: string
+        - name: hostid
+          in: path
+          description: The hostid for whom to return hosts for
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/HostDocument"
+            
+    put:
+      description: Updates a host for a user id
+      # used as the method name of the controller
+      operationId: puthostforuseridandhostid9
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to update a host for
+          required: true
+          type: string
+        - name: hostid
+          in: path
+          description: The hostid for whom to update
+          required: true
+          type: string
+        - name: aHost
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/HostDocument"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/HostDocument"
+
+    delete:
+        description: Deletes a single host for the the userid supplied
+        operationId: deletehost10
+        parameters:
+          - name: userid
+            in: path
+            description: ID of user to delete a hosts for
+            required: true
+            type: string
+          - name: hostid
+            in: path
+            description: ID of the host to delete
+            required: true
+            type: string
+        responses:
+          204:
+            description: host deleted
+          default:
+            description: unexpected error
+
+
+  /users:
+
+    # binds a127 app logic to a route
+    x-swagger-router-controller: users7
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+    
+    get:
+      description: Returns a lists of users 
+      # used as the method name of the controller
+      operationId: getusers11
+      parameters:
+        - name: username
+          in: query
+          description: The user name to search for
+          required: false
+          type: string
+          default: ""
+        - name: limit
+          in: query
+          description: The maximum number of documents to return 
+          required: false
+          type: integer
+          default: 50
+        - name: offset
+          in: query
+          description: The record offset to start returning documents from 
+          required: false
+          type: integer
+          default: 1
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/UserDocuments"
+          
+  
+  /user/{userid}/events/{hostid}:
+
+    x-swagger-router-controller: events8
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+
+    get:
+      description: Returns a list of events for a user id and host id
+      # used as the method name of the controller
+      operationId: geteventsforuseridandhost12
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to return events for
+          required: true
+          type: string
+        - name: hostid
+          in: path
+          description: The hostid for whom to return events for
+          required: true
+          type: string
+        - name: lastevent
+          in: query
+          description: Return only the last event
+          required: false
+          type: boolean
+          default: false
+        - name: limit
+          in: query
+          description: The maximum number of events to return
+          required: false
+          type: integer
+          default: 50
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/EventDocuments"
+        
+    delete:
+      description: Deletes all the events for a user id and host id
+      # used as the method name of the controller
+      operationId: deleteeventsforuseridandhost13
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to delete events for
+          required: true
+          type: string
+        - name: hostid
+          in: path
+          description: The hostid for whom to delete events for
+          required: true
+          type: string
+        - name: keeplastevent
+          in: query
+          description: Delete all except the last event
+          required: false
+          type: boolean
+          default: false
+      responses:    
+          204:
+            description: events deleted
+          default:
+            description: unexpected error
+
+      
+  /user/{userid}/event/{hostid}:
+
+    x-swagger-router-controller: event9
+    x-volos-authorizations: {}
+    x-volos-apply: {}
+
+    post:
+      description: Log an event for a user id and host id
+      # used as the method name of the controller
+      operationId: posteventforuseridandhost14
+      parameters:
+        - name: userid
+          in: path
+          description: The userid for whom to log event for
+          required: true
+          type: string
+        - name: hostid
+          in: path
+          description: The hostid for whom to log event for
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          
+ 
+          
+# complex objects have schema definitions
+definitions:
+  HelloWorldResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+ 
+  HostDocument:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      alertonchange:
+        type: boolean
+  
+  HostDocuments:
+    properties:
+      tags:
+        type: array
+        items:
+          $ref: "#/definitions/HostDocument"
+    
+  UserDocument:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+  
+  UserDocuments:
+    properties:
+      tag:
+        type: array
+        items:
+          $ref: "#/definitions/UserDocument"
+
+  EventDocument:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+        
+  EventDocuments:
+    properties:
+      tag:
+        type: array
+        items:
+          $ref: "#/definitions/EventDocument"
+    
+      
